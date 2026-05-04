@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice · BersihBersih</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1C2D5A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BersihBersih">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+
+  <!-- SEO & Open Graph -->
+  <meta name="description" content="Aplikasi invoice profesional untuk jasa kebersihan BersihBersih">
+  <meta property="og:title" content="Invoice · BersihBersih">
+  <meta property="og:description" content="Buat invoice jasa kebersihan dengan cepat dan profesional">
+  <meta property="og:image" content="icons/og-image.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="icons/og-image.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:        #F7F2E8;
+      --cream-light:  #FDFAF4;
+      --cream-mid:    #EDE5D3;
+      --cream-dark:   #DDD0B8;
+
+      --gold:         #B8922A;
+      --gold-bright:  #D4A93A;
+      --gold-light:   #E8C96A;
+      --gold-pale:    rgba(184,146,42,0.10);
+      --gold-border:  rgba(184,146,42,0.28);
+
+      --navy:         #1C2D5A;
+      --navy-dark:    #111e3d;
+
+      --ink:          #2C2416;
+      --ink-mid:      #5A4E38;
+      --ink-soft:     #8A7A60;
+
+      --success:      #2D7A4A;
+      --radius:       14px;
+      --shadow:       0 4px 32px rgba(184,146,42,0.10);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #1C2D5A;
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #111e3d;
+      border-bottom: 1px solid rgba(184,146,42,0.35);
+      padding: 0 5vw;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 900;
+      color: var(--gold-bright);
+    }
+    .logo span { color: var(--gold-bright); }
+    .logo-img-wrap { display: flex; align-items: center; }
+    .logo-img { height: 40px; width: auto; object-fit: contain; filter: brightness(1.05); }
+    .logo-fallback { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--gold-bright); }
+    .header-right {
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .badge-invoice {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold-light);
+      background: rgba(184,146,42,0.15); border-radius: 50px;
+      padding: 4px 12px; border: 1px solid var(--gold-border);
+    }
+
+    /* ── MAIN LAYOUT ── */
+    main {
+      max-width: 960px; margin: 0 auto;
+      padding: 36px 20px 80px;
+      display: grid; grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: #243870;
+      border-radius: var(--radius);
+      border: 1px solid rgba(184,146,42,0.25);
+      padding: 28px 32px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--cream-light); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-title::before {
+      content: '';
+      display: block; width: 4px; height: 18px;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      border-radius: 3px;
+    }
+
+    /* ── INVOICE META (top row) ── */
+    .meta-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--gold-light);
+    }
+    input, select, textarea {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.93rem; color: var(--cream-light);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(184,146,42,0.35);
+      border-radius: 10px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    input::placeholder, textarea::placeholder { color: rgba(253,250,244,0.4); }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(184,146,42,0.20);
+    }
+    input[readonly] {
+      background: rgba(255,255,255,0.05);
+      color: rgba(253,250,244,0.6);
+      cursor: default;
+    }
+    select option { background: #1C2D5A; color: var(--cream-light); }
+    textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+    select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%238A7A60'%3E%3Cpath d='M7 7l3 3 3-3'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+    }
+
+    /* ── CUSTOMER GRID ── */
+    .customer-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    .customer-grid .full { grid-column: 1 / -1; }
+
+    /* ── ITEMS TABLE ── */
+    .items-header {
+      display: grid;
+      grid-template-columns: 2.5fr 80px 130px 130px 44px;
+      gap: 10px;
+      padding: 0 0 10px 0;
+      border-bottom: 1px solid var(--gold-border);
+      margin-bottom: 10px;
+    }
+    .items-header span {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--gold-light);
+    }
+    .items-header span:nth-child(2),
+    .items-header span:nth-child(3),
+    .items-header span:nth-child(4) { text-align: right; }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 2.5fr 80px 130px 130px 44px;
+      gap: 10px; align-items: center; margin-bottom: 10px;
+      animation: fadeIn .25s ease;
+    }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+    .item-row input { text-align: left; }
+    .item-row input.right { text-align: right; }
+    .item-row .subtotal-cell {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem; font-weight: 500;
+      color: var(--gold); text-align: right;
+      padding: 11px 14px;
+      background: var(--gold-pale);
+      border: 1px solid var(--gold-border);
+      border-radius: 10px;
+    }
+    .btn-del {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(200,60,60,0.08); border: 1px solid rgba(200,60,60,0.2);
+      color: #c83c3c; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; transition: background .2s, transform .1s;
+      flex-shrink: 0;
+    }
+    .btn-del:hover { background: rgba(200,60,60,0.18); transform: scale(1.08); }
+
+    .btn-add-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-pale); color: var(--gold);
+      border: 1px dashed var(--gold);
+      padding: 10px 20px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      transition: background .2s, transform .1s;
+      margin-top: 6px;
+    }
+    .btn-add-item:hover { background: rgba(184,146,42,0.18); transform: translateY(-1px); }
+
+    /* ── TOTALS ── */
+    .totals-wrapper {
+      display: flex; justify-content: flex-end; margin-top: 20px;
+    }
+    .totals-box {
+      width: 340px;
+      border: 1px solid rgba(184,146,42,0.3);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 11px 20px;
+      font-size: 0.93rem; color: rgba(253,250,244,0.75);
+      border-bottom: 1px solid rgba(184,146,42,0.2);
+    }
+    .total-row:last-child { border-bottom: none; }
+    .total-row.grand {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: var(--cream-light); font-weight: 700;
+      font-size: 1.05rem;
+    }
+    .total-row.grand span { font-family: 'DM Mono', monospace; font-size: 1.1rem; }
+    .total-row span { font-family: 'DM Mono', monospace; }
+
+    /* ── DISCOUNT & TAX INPUTS ── */
+    .discount-row {
+      display: flex; gap: 16px; margin-top: 20px; align-items: flex-end;
+    }
+    .discount-row .field { flex: 1; }
+
+    /* ── NOTES ── */
+    .notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    /* ── ACTION BUTTONS ── */
+    .actions {
+      display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: var(--cream-light);
+      padding: 14px 28px; border-radius: 50px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      border: none; box-shadow: 0 6px 22px rgba(184,146,42,0.36);
+      transition: transform .2s, box-shadow .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(184,146,42,0.48); }
+
+    .btn-wa {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: #25d366; color: #fff;
+      padding: 14px 28px; border-radius: 50px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      border: none; box-shadow: 0 6px 22px rgba(37,211,102,0.30);
+      transition: transform .2s, box-shadow .2s;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+    }
+    .btn-wa:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(37,211,102,0.45); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.10); color: var(--cream-light);
+      padding: 14px 24px; border-radius: 50px;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+      border: 1px solid rgba(184,146,42,0.35);
+      transition: background .2s, transform .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.18); transform: translateY(-1px); }
+
+    /* ── PREVIEW PANEL (navy accent) ── */
+    #preview-section {
+      display: none;
+      background: #243870;
+      border: 1px solid rgba(184,146,42,0.3);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+      animation: fadeIn .35s ease;
+    }
+    .preview-header {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      padding: 28px 36px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+    }
+    .preview-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 900; color: var(--navy);
+    }
+    .preview-brand small { display: block; font-size: 0.75rem; color: rgba(28,45,90,0.6); font-family: 'DM Sans', sans-serif; font-weight: 400; margin-top: 2px; letter-spacing: 1px; text-transform: uppercase; }
+    .preview-inv-num {
+      text-align: right;
+    }
+    .preview-inv-num .label { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(28,45,90,0.6); font-weight: 600; }
+    .preview-inv-num .num { font-family: 'DM Mono', monospace; font-size: 1.1rem; color: var(--navy); margin-top: 4px; }
+    .preview-inv-num .date { font-size: 0.82rem; color: rgba(28,45,90,0.7); margin-top: 3px; }
+
+    .preview-body { padding: 32px 36px; }
+
+    .preview-parties {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;
+    }
+    .party-box {}
+    .party-box .party-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; margin-bottom: 8px; }
+    .party-box .party-name { font-weight: 700; font-size: 1rem; color: var(--cream-light); }
+    .party-box .party-detail { font-size: 0.85rem; color: rgba(253,250,244,0.7); line-height: 1.6; margin-top: 3px; }
+
+    /* Gold divider */
+    .gold-divider {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+      margin: 20px 0;
+      opacity: 0.4;
+    }
+
+    .preview-items-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .preview-items-table th {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gold-light); font-weight: 700;
+      padding: 8px 12px; text-align: left;
+      border-bottom: 1px solid rgba(184,146,42,0.3);
+    }
+    .preview-items-table th.right { text-align: right; }
+    .preview-items-table td {
+      padding: 11px 12px; font-size: 0.9rem; color: rgba(253,250,244,0.8);
+      border-bottom: 1px solid rgba(184,146,42,0.1);
+    }
+    .preview-items-table td.right { text-align: right; font-family: 'DM Mono', monospace; font-size: 0.88rem; }
+    .preview-items-table tr:last-child td { border-bottom: none; }
+
+    .preview-totals {
+      display: flex; justify-content: flex-end;
+    }
+    .preview-totals-box { width: 300px; }
+    .pt-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 0.9rem; color: rgba(253,250,244,0.75); }
+    .pt-row span:last-child { font-family: 'DM Mono', monospace; }
+    .pt-grand {
+      display: flex; justify-content: space-between; padding: 12px 16px;
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      border-radius: 10px; margin-top: 8px;
+      color: var(--cream-light); font-weight: 700; font-size: 1rem;
+    }
+    .pt-grand span:last-child { font-family: 'DM Mono', monospace; font-size: 1.05rem; }
+
+    .preview-notes {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 28px;
+    }
+    .note-box { font-size: 0.85rem; color: rgba(253,250,244,0.75); line-height: 1.65; }
+    .note-box .note-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+
+    .preview-footer-strip {
+      background: #111e3d;
+      border-top: 1px solid rgba(184,146,42,0.25);
+      padding: 14px 36px;
+      font-size: 0.78rem; color: rgba(253,250,244,0.5);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .preview-footer-strip .seal {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--gold-light); font-weight: 700; font-size: 0.78rem;
+    }
+    .seal-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold-bright); }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--ink); color: var(--cream-light);
+      padding: 12px 24px; border-radius: 50px;
+      font-size: 0.88rem; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: all .3s; z-index: 999;
+      border: 1px solid var(--gold-border);
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .meta-grid, .customer-grid, .notes-grid, .preview-parties, .preview-notes { grid-template-columns: 1fr; }
+      .customer-grid .full { grid-column: 1; }
+      .items-header, .item-row { grid-template-columns: 1fr 60px 100px 100px 36px; gap: 6px; }
+      .preview-body { padding: 20px; }
+      .preview-header { flex-direction: column; gap: 12px; padding: 20px; }
+      .preview-inv-num { text-align: left; }
+      .card { padding: 20px; }
+      .totals-wrapper { justify-content: stretch; }
+      .totals-box { width: 100%; }
+      .preview-totals { justify-content: stretch; }
+      .preview-totals-box { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-img-wrap">
+    <img src="icons/logo-header.png" alt="BersihBersih" class="logo-img"
+         onerror="this.style.display='none';document.querySelector('.logo-fallback').style.display='block'">
+    <div class="logo-fallback" style="display:none">bersih<span style="color:var(--gold-bright)">bersih</span></div>
+  </div>
+  <div class="header-right">
+    <span class="badge-invoice">✦ Invoice Pembelian</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ① META INVOICE -->
+  <div class="card">
+    <div class="card-title">Informasi Invoice</div>
+    <div class="meta-grid">
+      <div class="field">
+        <label>Nomor Invoice</label>
+        <input type="text" id="invNumber" readonly />
+      </div>
+      <div class="field">
+        <label>Tanggal Invoice</label>
+        <input type="date" id="invDate" />
+      </div>
+      <div class="field">
+        <label>Jatuh Tempo</label>
+        <input type="date" id="invDue" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ② CUSTOMER -->
+  <div class="card">
+    <div class="card-title">Data Pelanggan</div>
+    <div class="customer-grid">
+      <div class="field">
+        <label>Nama Pelanggan</label>
+        <input type="text" id="custName" placeholder="Nama lengkap / perusahaan" />
+      </div>
+      <div class="field">
+        <label>Nomor WhatsApp</label>
+        <input type="text" id="custWA" placeholder="08xxx / 62xxx" />
+      </div>
+      <div class="field full">
+        <label>Alamat Layanan</label>
+        <textarea id="custAddress" placeholder="Alamat lengkap lokasi yang akan dibersihkan..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ LAYANAN / ITEMS -->
+  <div class="card">
+    <div class="card-title">Rincian Layanan</div>
+
+    <div class="items-header">
+      <span>Nama Layanan / Item</span>
+      <span style="text-align:right">Qty</span>
+      <span style="text-align:right">Harga Satuan</span>
+      <span style="text-align:right">Subtotal</span>
+      <span></span>
+    </div>
+
+    <div id="itemsContainer"></div>
+
+    <button class="btn-add-item" onclick="addItem()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Tambah Layanan
+    </button>
+
+    <!-- Discount & Tax -->
+    <div class="discount-row">
+      <div class="field">
+        <label>Diskon (%)</label>
+        <input type="number" id="discountPct" placeholder="0" min="0" max="100" oninput="recalc()" />
+      </div>
+      <div class="field">
+        <label>Pajak / PPN (%)</label>
+        <input type="number" id="taxPct" placeholder="0" min="0" max="100" oninput="recalc()" />
+      </div>
+      <div class="field">
+        <label>Biaya Tranportasi (Rp)</label>
+        <input type="number" id="extraFee" placeholder="0" min="0" oninput="recalc()" />
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <div class="totals-wrapper">
+      <div class="totals-box">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span id="displaySubtotal">Rp 0</span>
+        </div>
+        <div class="total-row">
+          <span>Diskon</span>
+          <span id="displayDiscount">Rp 0</span>
+        </div>
+        <div class="total-row">
+          <span>Pajak</span>
+          <span id="displayTax">Rp 0</span>
+        </div>
+        <div class="total-row">
+          <span>Biaya Transportasi</span>
+          <span id="displayExtra">Rp 0</span>
+        </div>
+        <div class="total-row grand">
+          <span>TOTAL</span>
+          <span id="displayTotal">Rp 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ CATATAN -->
+  <div class="card">
+    <div class="card-title">Catatan & Ketentuan</div>
+    <div class="notes-grid">
+      <div class="field">
+        <label>Catatan untuk Pelanggan</label>
+        <textarea id="noteCustomer" placeholder="Pesan khusus, instruksi, atau ucapan terima kasih...">Terima kasih telah mempercayakan kebersihan kepada BersihBersih. Kami siap memberikan hasil terbaik!</textarea>
+      </div>
+      <div class="field">
+        <label>Syarat & Ketentuan Pembayaran</label>
+        <textarea id="noteTerms" placeholder="Cara pembayaran, batas waktu, dll...">Pembayaran dapat dilakukan via transfer Bank BCA. Hubungi kami untuk konfirmasi pembayaran.
+
+🏦 BCA: 7132222528 A/N PT SOLUSI JASA INTERAKSI</textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ ACTIONS -->
+  <div class="card">
+    <div class="card-title">Kirim & Simpan</div>
+    <div class="actions">
+      <button class="btn-primary" onclick="generatePreview()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Pratinjau Invoice
+      </button>
+      <button class="btn-secondary" onclick="resetForm()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- ⑥ PREVIEW -->
+  <div id="preview-section">
+    <div class="preview-header">
+      <div>
+        <div class="preview-brand">Bersih<span style="color:var(--navy)">Bersih</span>
+          <small>Jasa Kebersihan Profesional · Est. 2026</small>
+        </div>
+      </div>
+      <div class="preview-inv-num">
+        <div class="label">Invoice</div>
+        <div class="num" id="pv-num">—</div>
+        <div class="date" id="pv-date">—</div>
+      </div>
+    </div>
+
+    <div class="preview-body">
+      <div class="preview-parties">
+        <div class="party-box">
+          <div class="party-label">Dari</div>
+          <div class="party-name">BersihBersih</div>
+          <div class="party-detail">Jasa Kebersihan Profesional<br>📱 +62 821-2318-1255<br>🌐 bersihbersih.github.io/bersihbersih/<br><br><strong>Rekening:</strong><br>🏦 BCA: 7132222528 A/N PT SOLUSI JASA INTERAKSI<br></div>
+        </div>
+        <div class="party-box">
+          <div class="party-label">Kepada</div>
+          <div class="party-name" id="pv-cust-name">—</div>
+          <div class="party-detail" id="pv-cust-detail">—</div>
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <table class="preview-items-table">
+        <thead>
+          <tr>
+            <th>Layanan / Item</th>
+            <th class="right">Qty</th>
+            <th class="right">Harga Satuan</th>
+            <th class="right">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="pv-items"></tbody>
+      </table>
+
+      <div class="gold-divider"></div>
+
+      <div class="preview-totals">
+        <div class="preview-totals-box" id="pv-totals"></div>
+      </div>
+
+      <div class="preview-notes" id="pv-notes-wrap">
+        <div class="note-box">
+          <div class="note-label">Catatan</div>
+          <div id="pv-note-cust">—</div>
+        </div>
+        <div class="note-box">
+          <div class="note-label">Syarat Pembayaran</div>
+          <div id="pv-note-terms">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-footer-strip">
+      <span>Dokumen ini dibuat secara digital oleh sistem invoice BersihBersih</span>
+      <span class="seal">
+        <span class="seal-dot"></span>
+        BersihBersih · 2026
+      </span>
+    </div>
+
+    <!-- WA Button rendered here -->
+    <div style="padding: 20px 36px 16px; display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+      <a id="btn-wa-send" class="btn-wa" href="#" target="_blank">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Kirim Teks via WA
+      </a>
+      <button class="btn-wa" onclick="downloadPDF()" id="btn-download-img"
+        style="cursor:pointer; border:none; background:linear-gradient(135deg,#c0392b,#e74c3c);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        Unduh PDF Invoice
+      </button>
+      <a id="btn-wa-bb" class="btn-secondary" href="https://wa.me/6282123181255" target="_blank" style="text-decoration:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="color:#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Konfirmasi ke BersihBersih
+      </a>
+      <button class="btn-secondary" onclick="printInvoice()" style="cursor:pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Cetak / PDF
+      </button>
+    </div>
+
+    <!-- Petunjuk kirim PDF ke WA -->
+    <div id="wa-image-hint" style="display:none; margin: 0 36px 24px; padding:14px 18px; background:#e8f5ff; border:1px solid #3b82f6; border-radius:12px; font-size:0.88rem; color:#1e3a5f; line-height:1.8;">
+      📄 <strong>PDF berhasil diunduh!</strong><br>
+      Buka WhatsApp → pilih kontak pelanggan → tekan ikon lampiran 📎 → pilih <em>Dokumen</em> → pilih file PDF → kirim.
+    </div>
+  </div>
+
+</main>
+
+<div id="toast">✓ Invoice berhasil dibuat!</div>
+
+<script>
+  // ── State ──
+  let items = [];
+  let invCounter = parseInt(localStorage.getItem('bb_inv_counter') || '100');
+
+  // ── Init ──
+  window.addEventListener('DOMContentLoaded', () => {
+    generateInvNumber();
+    setDates();
+    addItem(); // default 1 item
+    addItem();
+  });
+
+  function generateInvNumber() {
+    invCounter++;
+    localStorage.setItem('bb_inv_counter', invCounter);
+    const d = new Date();
+    const ym = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}`;
+    document.getElementById('invNumber').value = `BB-${ym}-${String(invCounter).padStart(3,'0')}`;
+  }
+
+  function setDates() {
+    const today = new Date();
+    const due = new Date(); due.setDate(due.getDate() + 7);
+    document.getElementById('invDate').value = toInputDate(today);
+    document.getElementById('invDue').value = toInputDate(due);
+  }
+
+  function toInputDate(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function formatRp(num) {
+    return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+  }
+
+  // ── Items ──
+  function addItem() {
+    const id = Date.now();
+    items.push({ id, name:'', qty:1, price:0 });
+    renderItems();
+  }
+
+  function removeItem(id) {
+    items = items.filter(i => i.id !== id);
+    renderItems();
+    recalc();
+  }
+
+  function renderItems() {
+    const container = document.getElementById('itemsContainer');
+    container.innerHTML = '';
+    items.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.id = `row-${item.id}`;
+      row.innerHTML = `
+        <input type="text" placeholder="Nama layanan (cth: Cleaning Rumah)" value="${item.name}"
+          oninput="updateItem(${item.id},'name',this.value)" />
+        <input type="number" class="right" value="${item.qty}" min="1"
+          oninput="updateItem(${item.id},'qty',this.value)" />
+        <input type="number" class="right" placeholder="0" value="${item.price > 0 ? item.price : ''}"
+          oninput="updateItem(${item.id},'price',this.value)" />
+        <div class="subtotal-cell" id="sub-${item.id}">${formatRp(item.qty * item.price)}</div>
+        <button class="btn-del" onclick="removeItem(${item.id})" title="Hapus">✕</button>
+      `;
+      container.appendChild(row);
+    });
+    recalc();
+  }
+
+  function updateItem(id, field, val) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    if (field === 'name') item.name = val;
+    else if (field === 'qty') item.qty = parseFloat(val) || 0;
+    else if (field === 'price') item.price = parseFloat(val) || 0;
+    const sub = item.qty * item.price;
+    const el = document.getElementById(`sub-${id}`);
+    if (el) el.textContent = formatRp(sub);
+    recalc();
+  }
+
+  function recalc() {
+    const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
+    const discPct = parseFloat(document.getElementById('discountPct').value) || 0;
+    const taxPct = parseFloat(document.getElementById('taxPct').value) || 0;
+    const extra = parseFloat(document.getElementById('extraFee').value) || 0;
+
+    const disc = subtotal * discPct / 100;
+    const afterDisc = subtotal - disc;
+    const tax = afterDisc * taxPct / 100;
+    const total = afterDisc + tax + extra;
+
+    document.getElementById('displaySubtotal').textContent = formatRp(subtotal);
+    document.getElementById('displayDiscount').textContent = `- ${formatRp(disc)}`;
+    document.getElementById('displayTax').textContent = formatRp(tax);
+    document.getElementById('displayExtra').textContent = formatRp(extra);
+    document.getElementById('displayTotal').textContent = formatRp(total);
+  }
+
+  // ── Preview ──
+  function generatePreview() {
+    const num = document.getElementById('invNumber').value;
+    const dateVal = document.getElementById('invDate').value;
+    const dueVal = document.getElementById('invDue').value;
+    const custName = document.getElementById('custName').value || 'Pelanggan';
+    const custWA = document.getElementById('custWA').value;
+    const custAddr = document.getElementById('custAddress').value;
+    const noteC = document.getElementById('noteCustomer').value;
+    const noteT = document.getElementById('noteTerms').value;
+
+    const fmtDate = (s) => {
+      if (!s) return '—';
+      const d = new Date(s);
+      return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+    };
+
+    // Fill preview header
+    document.getElementById('pv-num').textContent = num;
+    document.getElementById('pv-date').textContent = `Tanggal: ${fmtDate(dateVal)} · Jatuh Tempo: ${fmtDate(dueVal)}`;
+    document.getElementById('pv-cust-name').textContent = custName;
+    document.getElementById('pv-cust-detail').innerHTML =
+      (custWA ? `📱 ${custWA}<br>` : '') + (custAddr ? custAddr.replace(/\n/g,'<br>') : '');
+
+    // Items
+    const tbody = document.getElementById('pv-items');
+    tbody.innerHTML = items.map(i => `
+      <tr>
+        <td>${i.name || '(Tanpa nama)'}</td>
+        <td class="right">${i.qty}</td>
+        <td class="right">${formatRp(i.price)}</td>
+        <td class="right">${formatRp(i.qty * i.price)}</td>
+      </tr>
+    `).join('');
+
+    // Totals
+    const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
+    const discPct = parseFloat(document.getElementById('discountPct').value) || 0;
+    const taxPct = parseFloat(document.getElementById('taxPct').value) || 0;
+    const extra = parseFloat(document.getElementById('extraFee').value) || 0;
+    const disc = subtotal * discPct / 100;
+    const afterDisc = subtotal - disc;
+    const tax = afterDisc * taxPct / 100;
+    const total = afterDisc + tax + extra;
+
+    document.getElementById('pv-totals').innerHTML = `
+      <div class="pt-row"><span>Subtotal</span><span>${formatRp(subtotal)}</span></div>
+      ${disc > 0 ? `<div class="pt-row"><span>Diskon (${discPct}%)</span><span>- ${formatRp(disc)}</span></div>` : ''}
+      ${tax > 0 ? `<div class="pt-row"><span>Pajak (${taxPct}%)</span><span>${formatRp(tax)}</span></div>` : ''}
+      ${extra > 0 ? `<div class="pt-row"><span>Biaya Tambahan</span><span>${formatRp(extra)}</span></div>` : ''}
+      <div class="pt-grand"><span>TOTAL</span><span>${formatRp(total)}</span></div>
+    `;
+
+    // Notes
+    document.getElementById('pv-note-cust').textContent = noteC || '—';
+    document.getElementById('pv-note-terms').textContent = noteT || '—';
+
+    // WhatsApp link → pelanggan
+    const waMsg = buildWAMessage({ num, dateVal, dueVal, custName, custAddr, items, subtotal, disc, discPct, tax, taxPct, extra, total, noteC, noteT });
+    let waNum = custWA.replace(/\D/g, '');
+    if (waNum.startsWith('0')) waNum = '62' + waNum.slice(1);
+    document.getElementById('btn-wa-send').href = `https://wa.me/${waNum}?text=${encodeURIComponent(waMsg)}`;
+
+    // Show preview
+    const sec = document.getElementById('preview-section');
+    sec.style.display = 'block';
+    setTimeout(() => sec.scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+
+    showToast('✦ Invoice berhasil dibuat!');
+  }
+
+  function buildWAMessage({ num, dateVal, dueVal, custName, custAddr, items, subtotal, disc, discPct, tax, taxPct, extra, total, noteC, noteT }) {
+    const fmtDate = (s) => {
+      if (!s) return '—';
+      const d = new Date(s);
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    };
+    const fmtRp = (n) => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+
+    // Buat baris item mirip tabel: nama | qty x harga | subtotal
+    const itemLines = items
+      .filter(i => i.name || i.price > 0)
+      .map((i, idx) => {
+        const name = (i.name || 'Layanan').substring(0, 28);
+        const sub  = fmtRp(i.qty * i.price);
+        return `  ${idx + 1}. *${name}*\n      ${i.qty} × ${fmtRp(i.price)} = *${sub}*`;
+      });
+
+    // Baris total: ratakan label & nilai dengan spasi
+    const pad = (label, val) => `  ${label.padEnd(22, ' ')}${val}`;
+
+    const lines = [
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `🧹 *bersihbersih*`,
+      `    _Jasa Kebersihan Profesional_`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      ``,
+      `📄 *INVOICE ${num}*`,
+      `📅 Tanggal    : ${fmtDate(dateVal)}`,
+      `⏰ Jatuh Tempo: ${fmtDate(dueVal)}`,
+      ``,
+      `─────────────────────────`,
+      `👤 *KEPADA*`,
+      `  *${custName}*`,
+      custAddr ? custAddr.split('\n').map(l => `  ${l}`).join('\n') : null,
+      ``,
+      `─────────────────────────`,
+      `📋 *LAYANAN / ITEM*`,
+      ``,
+      ...itemLines,
+      ``,
+      `─────────────────────────`,
+      `💰 *RINGKASAN PEMBAYARAN*`,
+      ``,
+      pad('Subtotal', fmtRp(subtotal)),
+      disc > 0  ? pad(`Diskon (${discPct}%)`, `- ${fmtRp(disc)}`)   : null,
+      tax > 0   ? pad(`Pajak (${taxPct}%)`,   fmtRp(tax))            : null,
+      extra > 0 ? pad('Biaya Tambahan',        fmtRp(extra))          : null,
+      ``,
+      `  ┌────────────────────────┐`,
+      `  │ 💎 *TOTAL  ${fmtRp(total)}*`,
+      `  └────────────────────────┘`,
+      ``,
+      noteT ? [`─────────────────────────`, `💳 *CARA PEMBAYARAN*`, noteT].join('\n') : null,
+      noteC ? [`─────────────────────────`, `📝 *CATATAN*`, noteC].join('\n')         : null,
+      ``,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `Terima kasih atas kepercayaan Anda 🌟`,
+      `📱 +62 821-2318-1255`,
+      `🌐 bersihbersih.id`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+    ].filter(l => l !== null && l !== undefined);
+
+    const msg = lines.join('\n');
+
+    // Fallback ringkas jika pesan > 1800 karakter (batas aman URL wa.me)
+    if (msg.length > 1800) {
+      const fallback = [
+        `🧹 *INVOICE BERSIHBERSIH*`,
+        `📄 *${num}*`,
+        `📅 ${fmtDate(dateVal)}  ⏰ JT: ${fmtDate(dueVal)}`,
+        ``,
+        `👤 *${custName}*`,
+        custAddr ? custAddr : null,
+        ``,
+        `📋 *Item:*`,
+        ...items.filter(i => i.name || i.price > 0).map((i, idx) =>
+          `${idx + 1}. ${i.name || 'Layanan'} (${i.qty}×${fmtRp(i.price)}) = *${fmtRp(i.qty * i.price)}*`
+        ),
+        ``,
+        `Subtotal: ${fmtRp(subtotal)}`,
+        disc > 0  ? `Diskon (${discPct}%): -${fmtRp(disc)}`  : null,
+        tax > 0   ? `Pajak (${taxPct}%): ${fmtRp(tax)}`       : null,
+        extra > 0 ? `Biaya Tambahan: ${fmtRp(extra)}`          : null,
+        `💎 *TOTAL: ${fmtRp(total)}*`,
+        ``,
+        `📱 +62 821-2318-1255 | 🌐 bersihbersih.id`,
+      ].filter(l => l !== null && l !== undefined);
+      return fallback.join('\n');
+    }
+
+    return msg;
+  }
+
+  // ── Download PDF ──
+  function downloadPDF() {
+    const invNum = document.getElementById('invNumber').value || 'invoice';
+    const prevTitle = document.title;
+    document.title = `Invoice-BersihBersih-${invNum}`;
+    window.print();
+    document.title = prevTitle;
+  }
+
+  function printInvoice() { downloadPDF(); }
+
+  function resetForm() {
+    if (!confirm('Reset semua data invoice?')) return;
+    items = [];
+    renderItems();
+    addItem(); addItem();
+    document.getElementById('custName').value = '';
+    document.getElementById('custWA').value = '';
+    document.getElementById('custAddress').value = '';
+    document.getElementById('discountPct').value = '';
+    document.getElementById('taxPct').value = '';
+    document.getElementById('extraFee').value = '';
+    document.getElementById('preview-section').style.display = 'none';
+    generateInvNumber();
+    setDates();
+    recalc();
+    showToast('🔄 Form berhasil direset');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Print / PDF styles ──
+  const printStyle = document.createElement('style');
+  printStyle.textContent = `
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      header, main > .card, main > div.actions { display: none !important; }
+      #preview-section {
+        display: block !important;
+        border: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+      }
+      #preview-section > div:last-of-type,
+      #preview-section > div[style*="padding: 20px 36px"],
+      #wa-image-hint { display: none !important; }
+      body { background: white !important; margin: 0 !important; }
+      main { padding: 0 !important; margin: 0 !important; max-width: 100% !important; }
+      .preview-header { background: linear-gradient(135deg, #D4A93A, #B8922A) !important; }
+      .preview-brand { color: #1C2D5A !important; }
+      .pt-grand { background: linear-gradient(135deg, #D4A93A, #B8922A) !important; }
+    }
+  `;
+  document.head.appendChild(printStyle);
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.log('SW error:', err));
+    });
+  }
+</script>
+</body>
+</html>

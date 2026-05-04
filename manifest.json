@@ -1,0 +1,27 @@
+{
+  "name": "Invoice BersihBersih",
+  "short_name": "BersihBersih",
+  "description": "Aplikasi invoice jasa kebersihan profesional",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1C2D5A",
+  "theme_color": "#1C2D5A",
+  "orientation": "portrait-primary",
+  "lang": "id",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
