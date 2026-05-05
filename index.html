@@ -754,6 +754,104 @@
     .cf-chart-bar-income { background: linear-gradient(180deg, #4ade80, #22c55e); }
     .cf-chart-bar-expense { background: linear-gradient(180deg, #f87171, #ef4444); }
 
+    /* ── CF ITEM DETAIL TABLE ── */
+    .cf-items-section {
+      margin-top: 18px;
+      border: 1px solid rgba(184,146,42,0.25);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .cf-items-section-header {
+      background: rgba(184,146,42,0.1);
+      padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(184,146,42,0.2);
+    }
+    .cf-items-section-title {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--gold-light);
+    }
+    .cf-items-table-header {
+      display: grid;
+      grid-template-columns: 40px 1fr 70px 110px 140px 110px 36px;
+      gap: 8px; padding: 8px 14px;
+      background: rgba(184,146,42,0.07);
+      border-bottom: 1px solid rgba(184,146,42,0.15);
+    }
+    .cf-items-table-header span {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.4px;
+      text-transform: uppercase; color: var(--gold-light);
+    }
+    .cf-items-table-header span:nth-child(3),
+    .cf-items-table-header span:nth-child(4),
+    .cf-items-table-header span:nth-child(6) { text-align: right; }
+    .cf-item-rows { padding: 8px 14px; }
+    .cf-item-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 70px 110px 140px 110px 36px;
+      gap: 8px; align-items: center; margin-bottom: 8px;
+      animation: fadeIn .2s ease;
+    }
+    .cf-item-row input { font-size: 0.84rem; padding: 8px 10px; }
+    .cf-item-row input.right { text-align: right; }
+    .cf-item-row .cf-subtotal-cell {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--gold); text-align: right;
+      padding: 8px 10px;
+      background: var(--gold-pale);
+      border: 1px solid var(--gold-border);
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .cf-item-no {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem; color: rgba(253,250,244,0.45);
+      text-align: center; padding-top: 4px;
+    }
+    .cf-items-footer {
+      padding: 8px 14px 12px;
+      display: flex; justify-content: flex-end; align-items: center; gap: 16px;
+      border-top: 1px solid rgba(184,146,42,0.15);
+    }
+    .cf-items-total-label {
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; color: var(--gold-light);
+    }
+    .cf-items-total-val {
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem; font-weight: 700; color: var(--gold);
+    }
+
+    /* Detail popup in history table */
+    .cf-item-detail-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--gold-pale); border: 1px solid var(--gold-border);
+      color: var(--gold); border-radius: 6px;
+      font-size: 0.7rem; font-weight: 700; padding: 2px 8px;
+      cursor: pointer; transition: background .15s;
+    }
+    .cf-item-detail-badge:hover { background: rgba(184,146,42,0.2); }
+
+    /* Responsive adjustments */
+    @media (max-width: 760px) {
+      .cf-items-table-header { display: none; }
+      .cf-item-row {
+        grid-template-columns: 1fr 36px;
+        grid-template-rows: auto auto auto;
+        gap: 5px;
+        border: 1px solid rgba(184,146,42,0.15);
+        border-radius: 8px; padding: 8px; margin-bottom: 8px;
+      }
+      .cf-item-no { display: none; }
+      .cf-item-row input:nth-child(2) { grid-column: 1 / -1; }
+      .cf-item-row input:nth-child(3),
+      .cf-item-row input:nth-child(4) { grid-column: 1; }
+      .cf-item-row input:nth-child(5) { grid-column: 1 / -1; }
+      .cf-item-row .cf-subtotal-cell { grid-column: 1; }
+      .cf-item-row .btn-del { grid-column: 2; grid-row: 1 / 4; align-self: center; }
+    }
+
     /* ── RESPONSIVE MOBILE ── */
     @media (max-width: 760px) {
       html, body { overflow-x: hidden; }
@@ -1277,6 +1375,34 @@
         <input type="text" id="cf-description" placeholder="Deskripsi transaksi..." />
       </div>
     </div>
+
+    <!-- DETAIL BARANG / ITEM -->
+    <div class="cf-items-section">
+      <div class="cf-items-section-header">
+        <span class="cf-items-section-title">📦 Detail Barang (Opsional)</span>
+        <button class="btn-add-item" onclick="addCFItem()" style="padding:6px 14px;font-size:0.8rem;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Barang
+        </button>
+      </div>
+      <div class="cf-items-table-header">
+        <span>No</span>
+        <span>Nama Barang</span>
+        <span>Qty</span>
+        <span>Harga Satuan</span>
+        <span>Tempat Beli</span>
+        <span>Total Harga</span>
+        <span></span>
+      </div>
+      <div class="cf-item-rows" id="cf-items-container">
+        <div style="padding:14px;text-align:center;font-size:0.82rem;color:rgba(253,250,244,0.35);">Belum ada barang. Klik "Tambah Barang" untuk mulai.</div>
+      </div>
+      <div class="cf-items-footer">
+        <span class="cf-items-total-label">Total Barang:</span>
+        <span class="cf-items-total-val" id="cf-items-grand-total">Rp 0</span>
+      </div>
+    </div>
+
     <div style="margin-top:16px;">
       <button class="btn-primary" onclick="saveCFTransaction()" style="padding:12px 28px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1308,6 +1434,7 @@
             <th>Tipe</th>
             <th>Kategori</th>
             <th>Keterangan</th>
+            <th>Detail Barang</th>
             <th>Metode</th>
             <th style="text-align:right">Jumlah</th>
             <th>Aksi</th>
@@ -1361,6 +1488,17 @@
   </div>
 </div>
 
+<!-- MODAL: Detail Barang Arus Kas -->
+<div class="modal-backdrop" id="modal-cf-items">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-title">📦 Detail Barang</div>
+    <div id="modal-cf-items-content" style="overflow-x:auto;"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('modal-cf-items')" style="padding:10px 20px;">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════
 //   STATE & STORAGE
@@ -1390,6 +1528,12 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cf-date').value = toInputDate(today);
   // Init category filter for default type
   setCFType('income');
+  // Init CF items
+  renderCFItems();
+  // Track manual edits on amount
+  document.getElementById('cf-amount-input').addEventListener('input', function() {
+    this.dataset.manualEdit = '1';
+  });
 });
 
 // ══════════════════════════════════
@@ -2168,6 +2312,108 @@ function showToast(msg) {
 //   CASHFLOW / ARUS KAS
 // ══════════════════════════════════
 let cfCurrentType = 'income';
+let cfItems = []; // items detail for current transaction
+
+function addCFItem() {
+  const id = Date.now() + Math.random();
+  cfItems.push({ id, name: '', qty: 1, price: 0, place: '' });
+  renderCFItems();
+}
+
+function removeCFItem(id) {
+  cfItems = cfItems.filter(i => i.id !== id);
+  renderCFItems();
+}
+
+function updateCFItem(id, field, val) {
+  const item = cfItems.find(i => i.id === id);
+  if (!item) return;
+  if (field === 'name') item.name = val;
+  else if (field === 'qty') item.qty = parseFloat(val) || 0;
+  else if (field === 'price') item.price = parseFloat(val) || 0;
+  else if (field === 'place') item.place = val;
+  const sub = document.getElementById(`cf-sub-${id}`);
+  if (sub) sub.textContent = formatRp(item.qty * item.price);
+  recalcCFItems();
+  // Auto-fill amount field from total if not manually set
+  const totalItems = cfItems.reduce((s, i) => s + i.qty * i.price, 0);
+  if (totalItems > 0) {
+    const amtEl = document.getElementById('cf-amount-input');
+    if (!amtEl.dataset.manualEdit) amtEl.value = totalItems;
+  }
+}
+
+function recalcCFItems() {
+  const total = cfItems.reduce((s, i) => s + i.qty * i.price, 0);
+  const el = document.getElementById('cf-items-grand-total');
+  if (el) el.textContent = formatRp(total);
+}
+
+function renderCFItems() {
+  const container = document.getElementById('cf-items-container');
+  if (!container) return;
+  if (cfItems.length === 0) {
+    container.innerHTML = '<div style="padding:14px;text-align:center;font-size:0.82rem;color:rgba(253,250,244,0.35);">Belum ada barang. Klik "Tambah Barang" untuk mulai.</div>';
+    recalcCFItems();
+    return;
+  }
+  container.innerHTML = '';
+  cfItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'cf-item-row';
+    row.id = `cf-row-${item.id}`;
+    row.innerHTML = `
+      <div class="cf-item-no">${idx + 1}</div>
+      <input type="text" placeholder="Nama barang..." value="${item.name}" oninput="updateCFItem(${item.id},'name',this.value)" />
+      <input type="number" class="right" placeholder="1" value="${item.qty}" min="1" oninput="updateCFItem(${item.id},'qty',this.value)" />
+      <input type="number" class="right" placeholder="0" value="${item.price > 0 ? item.price : ''}" oninput="updateCFItem(${item.id},'price',this.value)" />
+      <input type="text" placeholder="Minimarket, Online, dll" value="${item.place}" oninput="updateCFItem(${item.id},'place',this.value)" />
+      <div class="cf-subtotal-cell" id="cf-sub-${item.id}">${formatRp(item.qty * item.price)}</div>
+      <button class="btn-del" onclick="removeCFItem(${item.id})" title="Hapus">✕</button>
+    `;
+    container.appendChild(row);
+  });
+  recalcCFItems();
+}
+
+function showCFItemsDetail(items) {
+  const modal = document.getElementById('modal-cf-items');
+  const content = document.getElementById('modal-cf-items-content');
+  if (!items || items.length === 0) return;
+  const rows = items.map((it, idx) => `
+    <tr>
+      <td style="text-align:center;color:rgba(253,250,244,0.45);font-family:'DM Mono',monospace;font-size:0.8rem;">${idx+1}</td>
+      <td style="color:var(--cream-light);">${it.name || '—'}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;">${it.qty}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;">${formatRp(it.price)}</td>
+      <td style="color:rgba(253,250,244,0.65);font-size:0.82rem;">${it.place || '—'}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-weight:700;color:var(--gold);">${formatRp(it.qty * it.price)}</td>
+    </tr>
+  `).join('');
+  const grandTotal = items.reduce((s, i) => s + i.qty * i.price, 0);
+  content.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;min-width:480px;font-size:0.85rem;">
+      <thead>
+        <tr style="background:rgba(184,146,42,0.1);">
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);">No</th>
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);text-align:left;">Nama Barang</th>
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);text-align:right;">Qty</th>
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);text-align:right;">Harga</th>
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);text-align:left;">Tempat Beli</th>
+          <th style="padding:8px 10px;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--gold-light);font-weight:700;border-bottom:1px solid var(--gold-border);text-align:right;">Total</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr style="background:rgba(184,146,42,0.1);">
+          <td colspan="5" style="padding:10px;font-weight:700;color:var(--gold-light);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.5px;">Total Keseluruhan</td>
+          <td style="padding:10px;text-align:right;font-family:'DM Mono',monospace;font-weight:700;font-size:1rem;color:var(--gold);">${formatRp(grandTotal)}</td>
+        </tr>
+      </tfoot>
+    </table>
+  `;
+  modal.classList.add('open');
+}
 
 function loadCashflow() { return JSON.parse(localStorage.getItem('bb_cashflow') || '[]'); }
 function saveCashflow(data) { localStorage.setItem('bb_cashflow', JSON.stringify(data)); }
@@ -2211,6 +2457,7 @@ function saveCFTransaction() {
     category,
     method,
     description: desc,
+    items: JSON.parse(JSON.stringify(cfItems)),
     createdAt: new Date().toISOString(),
   });
   saveCashflow(data);
@@ -2219,6 +2466,8 @@ function saveCFTransaction() {
   document.getElementById('cf-amount-input').value = '';
   document.getElementById('cf-category').value = '';
   document.getElementById('cf-description').value = '';
+  cfItems = [];
+  renderCFItems();
 
   renderCashflow();
   showToast(`✦ Transaksi ${cfCurrentType === 'income' ? 'pemasukan' : 'pengeluaran'} disimpan!`);
@@ -2294,12 +2543,17 @@ function renderCashflow() {
     const dateStr = t.date ? new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
     const isIncome = t.type === 'income';
     const amtStr = (isIncome ? '+' : '-') + ' ' + formatRp(t.amount);
+    const hasItems = t.items && t.items.length > 0;
+    const itemsBadge = hasItems
+      ? `<span class="cf-item-detail-badge" onclick='showCFItemsDetail(${JSON.stringify(t.items)})'>📦 ${t.items.length} barang</span>`
+      : '<span style="color:rgba(253,250,244,0.3);font-size:0.78rem;">—</span>';
     return `
       <tr>
         <td style="white-space:nowrap;">${dateStr}</td>
         <td><span class="${isIncome ? 'cf-badge-income' : 'cf-badge-expense'}">${isIncome ? '📈 Masuk' : '📉 Keluar'}</span></td>
         <td style="font-size:0.84rem;">${t.category || '—'}</td>
         <td style="color:rgba(253,250,244,0.65);font-size:0.84rem;">${t.description || '—'}</td>
+        <td>${itemsBadge}</td>
         <td style="font-size:0.82rem;color:rgba(253,250,244,0.5);">${t.method || '—'}</td>
         <td style="text-align:right;font-family:'DM Mono',monospace;font-weight:700;font-size:0.9rem;color:${isIncome ? '#4ade80' : '#f87171'};">${amtStr}</td>
         <td><button class="btn-icon danger" onclick="deleteCFTransaction('${t.id}')" title="Hapus">🗑</button></td>
