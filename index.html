@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Invoice · BersihBersih</title>
 
   <!-- PWA -->
@@ -688,25 +688,114 @@
     .modal-fields { display: flex; flex-direction: column; gap: 14px; }
 
     /* ── RESPONSIVE ── */
+    /* ─────────────────────────────────────
+       CASHFLOW PAGE STYLES
+    ───────────────────────────────────── */
+    .cf-summary-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      margin-bottom: 24px;
+    }
+    .cf-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(184,146,42,0.25);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .cf-card.income { border-color: rgba(74,222,128,0.3); }
+    .cf-card.expense { border-color: rgba(248,113,113,0.3); }
+    .cf-card.net { border-color: var(--gold-border); }
+    .cf-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .cf-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gold-light); margin-bottom: 6px; }
+    .cf-amount { font-family: 'DM Mono', monospace; font-size: 1rem; font-weight: 700; line-height: 1.3; }
+    .cf-amount.income { color: #4ade80; }
+    .cf-amount.expense { color: #f87171; }
+    .cf-amount.net.positive { color: #4ade80; }
+    .cf-amount.net.negative { color: #f87171; }
+    .cf-amount.net.zero { color: var(--gold); }
+
+    .cf-type-tabs {
+      display: flex; gap: 8px; margin-bottom: 16px;
+    }
+    .cf-type-btn {
+      padding: 8px 18px; border-radius: 50px; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; border: 1px solid; transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .cf-type-btn.income { border-color: rgba(74,222,128,0.4); color: #4ade80; background: rgba(74,222,128,0.08); }
+    .cf-type-btn.income.active { background: rgba(74,222,128,0.2); }
+    .cf-type-btn.expense { border-color: rgba(248,113,113,0.4); color: #f87171; background: rgba(248,113,113,0.08); }
+    .cf-type-btn.expense.active { background: rgba(248,113,113,0.2); }
+    .cf-type-btn.all { border-color: var(--gold-border); color: var(--gold-light); background: var(--gold-pale); }
+    .cf-type-btn.all.active { background: rgba(184,146,42,0.2); }
+
+    .cf-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .cf-form-grid .full { grid-column: 1 / -1; }
+
+    .cf-table-wrap { overflow-x: auto; border-radius: 10px; }
+    .cf-table {
+      width: 100%; border-collapse: collapse; min-width: 600px;
+    }
+    .cf-table thead tr { background: rgba(184,146,42,0.1); }
+    .cf-table th {
+      font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--gold-light); font-weight: 700; padding: 12px 14px; text-align: left;
+      border-bottom: 1px solid var(--gold-border); white-space: nowrap;
+    }
+    .cf-table td {
+      padding: 12px 14px; font-size: 0.88rem; color: rgba(253,250,244,0.8);
+      border-bottom: 1px solid rgba(184,146,42,0.1); vertical-align: middle;
+    }
+    .cf-table tbody tr:hover { background: rgba(184,146,42,0.04); }
+    .cf-table tbody tr:last-child td { border-bottom: none; }
+    .cf-badge-income { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); padding: 3px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+    .cf-badge-expense { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); padding: 3px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 700; }
+
+    .cf-chart-bar-income { background: linear-gradient(180deg, #4ade80, #22c55e); }
+    .cf-chart-bar-expense { background: linear-gradient(180deg, #f87171, #ef4444); }
+
+    /* ── RESPONSIVE MOBILE ── */
     @media (max-width: 760px) {
+      html, body { overflow-x: hidden; }
       .stats-grid { grid-template-columns: repeat(2, 1fr); }
       .meta-grid, .customer-grid, .notes-grid, .preview-parties, .preview-notes { grid-template-columns: 1fr; }
       .customer-grid .full { grid-column: 1; }
-      .items-header, .item-row { grid-template-columns: 1fr 60px 100px 100px 36px; gap: 6px; }
-      .preview-body { padding: 20px; }
-      .preview-header { flex-direction: column; gap: 12px; padding: 20px; }
+      .items-header { display: none; }
+      .item-row {
+        grid-template-columns: 1fr 50px;
+        grid-template-rows: auto auto;
+        gap: 6px; border: 1px solid rgba(184,146,42,0.15); border-radius: 10px; padding: 10px; margin-bottom: 10px;
+      }
+      .item-row input:nth-child(1) { grid-column: 1 / -1; }
+      .item-row input:nth-child(2) { grid-column: 1; }
+      .item-row input:nth-child(3) { grid-column: 1; }
+      .item-row .subtotal-cell { grid-column: 1; }
+      .item-row .btn-del { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+      .preview-body { padding: 16px; }
+      .preview-header { flex-direction: column; gap: 12px; padding: 18px; }
       .preview-inv-num { text-align: left; }
-      .card { padding: 20px; }
+      .card { padding: 16px; }
       .totals-wrapper { justify-content: stretch; }
       .totals-box { width: 100%; }
       .preview-totals { justify-content: stretch; }
       .preview-totals-box { width: 100%; }
       .customer-cards-grid { grid-template-columns: 1fr; }
+      .cf-summary-grid { grid-template-columns: 1fr; gap: 10px; }
+      .cf-form-grid { grid-template-columns: 1fr; }
+      .cf-form-grid .full { grid-column: 1; }
+      .actions { gap: 10px; }
+      .btn-primary, .btn-wa, .btn-secondary { padding: 12px 18px; font-size: 0.88rem; }
+      main { padding: 16px 12px 90px; }
+      .discount-row { flex-direction: column; gap: 10px; }
+      .filter-row { gap: 8px; }
+      .filter-row input, .filter-row select { min-width: 100%; max-width: 100%; }
     }
     @media (max-width: 520px) {
       .stats-grid { grid-template-columns: 1fr 1fr; }
       .stat-value { font-size: 1rem; }
-      .stat-value.big { font-size: 0.9rem; }
+      .stat-value.big { font-size: 0.88rem; }
+      header { padding: 0 14px; height: 56px; }
+      .nav-tab { padding: 12px 14px; font-size: 0.78rem; }
     }
   </style>
 </head>
@@ -743,6 +832,10 @@
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     Data Pelanggan
     <span class="tab-badge" id="customers-count">0</span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('cashflow')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+    Arus Kas
   </button>
 </nav>
 
@@ -1102,6 +1195,144 @@
 <!-- TOAST -->
 <div id="toast">✓ Berhasil!</div>
 
+<!-- ══════════════════════════════════
+     PAGE: ARUS KAS (CASHFLOW)
+══════════════════════════════════ -->
+<div id="page-cashflow" class="page">
+<main>
+
+  <!-- Summary Cards -->
+  <div class="cf-summary-grid" id="cf-summary-grid">
+    <div class="cf-card income">
+      <div class="cf-icon">📈</div>
+      <div class="cf-label">Total Pemasukan</div>
+      <div class="cf-amount income" id="cf-total-income">Rp 0</div>
+      <div class="stat-sub" id="cf-income-month">Bulan ini</div>
+    </div>
+    <div class="cf-card expense">
+      <div class="cf-icon">📉</div>
+      <div class="cf-label">Total Pengeluaran</div>
+      <div class="cf-amount expense" id="cf-total-expense">Rp 0</div>
+      <div class="stat-sub" id="cf-expense-month">Bulan ini</div>
+    </div>
+    <div class="cf-card net">
+      <div class="cf-icon">⚖️</div>
+      <div class="cf-label">Arus Kas Bersih</div>
+      <div class="cf-amount net" id="cf-net-amount">Rp 0</div>
+      <div class="stat-sub" id="cf-net-label">Surplus / Defisit</div>
+    </div>
+  </div>
+
+  <!-- Tambah Transaksi -->
+  <div class="card">
+    <div class="card-title">Tambah Transaksi</div>
+    <div style="margin-bottom:16px;">
+      <div class="cf-type-tabs">
+        <button class="cf-type-btn income active" id="cf-btn-income" onclick="setCFType('income')">📈 Pemasukan</button>
+        <button class="cf-type-btn expense" id="cf-btn-expense" onclick="setCFType('expense')">📉 Pengeluaran</button>
+      </div>
+    </div>
+    <div class="cf-form-grid">
+      <div class="field">
+        <label>Tanggal</label>
+        <input type="date" id="cf-date" />
+      </div>
+      <div class="field">
+        <label>Jumlah (Rp)</label>
+        <input type="number" id="cf-amount-input" placeholder="0" min="0" />
+      </div>
+      <div class="field">
+        <label>Kategori</label>
+        <select id="cf-category">
+          <option value="">— Pilih Kategori —</option>
+          <optgroup label="Pemasukan" id="cf-cat-income-group">
+            <option value="Pembayaran Jasa">Pembayaran Jasa</option>
+            <option value="DP / Uang Muka">DP / Uang Muka</option>
+            <option value="Pendapatan Lain">Pendapatan Lain</option>
+          </optgroup>
+          <optgroup label="Pengeluaran" id="cf-cat-expense-group">
+            <option value="Gaji Karyawan">Gaji Karyawan</option>
+            <option value="Peralatan Kebersihan">Peralatan Kebersihan</option>
+            <option value="Bahan Kimia / Sabun">Bahan Kimia / Sabun</option>
+            <option value="Transportasi">Transportasi</option>
+            <option value="Sewa Tempat">Sewa Tempat</option>
+            <option value="Listrik & Air">Listrik & Air</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Pengeluaran Lain">Pengeluaran Lain</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field">
+        <label>Metode Pembayaran</label>
+        <select id="cf-method">
+          <option value="Transfer Bank">Transfer Bank</option>
+          <option value="Tunai">Tunai</option>
+          <option value="QRIS">QRIS</option>
+          <option value="Kartu Debit">Kartu Debit</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label>Keterangan</label>
+        <input type="text" id="cf-description" placeholder="Deskripsi transaksi..." />
+      </div>
+    </div>
+    <div style="margin-top:16px;">
+      <button class="btn-primary" onclick="saveCFTransaction()" style="padding:12px 28px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Simpan Transaksi
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter & Daftar Transaksi -->
+  <div class="card">
+    <div class="card-title">Riwayat Arus Kas</div>
+    <div class="filter-row" style="margin-bottom:16px;">
+      <input type="text" id="cf-search" placeholder="🔍 Cari keterangan / kategori..." oninput="renderCashflow()" style="flex:2;" />
+      <select id="cf-filter-type" onchange="renderCashflow()">
+        <option value="">Semua Tipe</option>
+        <option value="income">Pemasukan</option>
+        <option value="expense">Pengeluaran</option>
+      </select>
+      <select id="cf-filter-month" onchange="renderCashflow()">
+        <option value="">Semua Bulan</option>
+      </select>
+    </div>
+
+    <div class="cf-table-wrap">
+      <table class="cf-table">
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>Tipe</th>
+            <th>Kategori</th>
+            <th>Keterangan</th>
+            <th>Metode</th>
+            <th style="text-align:right">Jumlah</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="cf-table-body"></tbody>
+      </table>
+    </div>
+    <div id="cf-empty" class="empty-state" style="display:none;">
+      <div class="empty-icon">💸</div>
+      <p>Belum ada transaksi.<br>Mulai catat pemasukan & pengeluaran kamu!</p>
+    </div>
+    <div id="cf-summary-bar" style="margin-top:16px;padding:14px 16px;background:var(--gold-pale);border:1px solid var(--gold-border);border-radius:10px;display:none;">
+      <div style="display:flex;gap:20px;flex-wrap:wrap;font-size:0.82rem;color:var(--gold-light);">
+        <span>Ditampilkan: <strong id="cf-sum-count">0</strong> transaksi</span>
+        <span>Pemasukan: <strong id="cf-sum-income" style="color:#4ade80;">Rp 0</strong></span>
+        <span>Pengeluaran: <strong id="cf-sum-expense" style="color:#f87171;">Rp 0</strong></span>
+        <span>Selisih: <strong id="cf-sum-net">Rp 0</strong></span>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
 <!-- MODAL: Tambah / Edit Pelanggan -->
 <div class="modal-backdrop" id="modal-customer">
   <div class="modal">
@@ -1152,7 +1383,13 @@ window.addEventListener('DOMContentLoaded', () => {
   addItem(); addItem();
   updateBadges();
   populateMonthFilter();
+  populateCFMonthFilter();
   renderCustomerSuggestions();
+  // Set default cashflow date to today
+  const today = new Date();
+  document.getElementById('cf-date').value = toInputDate(today);
+  // Init category filter for default type
+  setCFType('income');
 });
 
 // ══════════════════════════════════
@@ -1163,12 +1400,13 @@ function switchTab(tab) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap = { invoice: 0, dashboard: 1, history: 2, customers: 3 };
-  tabs[tabMap[tab]].classList.add('active');
+  const tabMap = { invoice: 0, dashboard: 1, history: 2, customers: 3, cashflow: 4 };
+  if (tabMap[tab] !== undefined) tabs[tabMap[tab]].classList.add('active');
 
   if (tab === 'dashboard') renderDashboard();
   if (tab === 'history') renderHistory();
   if (tab === 'customers') renderCustomers();
+  if (tab === 'cashflow') renderCashflow();
 }
 
 function updateBadges() {
@@ -1924,6 +2162,162 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════
+//   CASHFLOW / ARUS KAS
+// ══════════════════════════════════
+let cfCurrentType = 'income';
+
+function loadCashflow() { return JSON.parse(localStorage.getItem('bb_cashflow') || '[]'); }
+function saveCashflow(data) { localStorage.setItem('bb_cashflow', JSON.stringify(data)); }
+
+function setCFType(type) {
+  cfCurrentType = type;
+  document.getElementById('cf-btn-income').classList.toggle('active', type === 'income');
+  document.getElementById('cf-btn-expense').classList.toggle('active', type === 'expense');
+
+  // Update category options visibility
+  const cat = document.getElementById('cf-category');
+  const incomeGroup = document.getElementById('cf-cat-income-group');
+  const expenseGroup = document.getElementById('cf-cat-expense-group');
+  cat.value = '';
+  if (type === 'income') {
+    incomeGroup.style.display = '';
+    expenseGroup.style.display = 'none';
+  } else {
+    incomeGroup.style.display = 'none';
+    expenseGroup.style.display = '';
+  }
+}
+
+function saveCFTransaction() {
+  const dateVal = document.getElementById('cf-date').value;
+  const amountVal = parseFloat(document.getElementById('cf-amount-input').value) || 0;
+  const category = document.getElementById('cf-category').value;
+  const method = document.getElementById('cf-method').value;
+  const desc = document.getElementById('cf-description').value.trim();
+
+  if (!dateVal) { showToast('⚠ Tanggal wajib diisi'); return; }
+  if (amountVal <= 0) { showToast('⚠ Jumlah harus lebih dari 0'); return; }
+  if (!category) { showToast('⚠ Pilih kategori transaksi'); return; }
+
+  const data = loadCashflow();
+  data.unshift({
+    id: 'CF' + Date.now(),
+    type: cfCurrentType,
+    date: dateVal,
+    amount: amountVal,
+    category,
+    method,
+    description: desc,
+    createdAt: new Date().toISOString(),
+  });
+  saveCashflow(data);
+
+  // Reset form
+  document.getElementById('cf-amount-input').value = '';
+  document.getElementById('cf-category').value = '';
+  document.getElementById('cf-description').value = '';
+
+  renderCashflow();
+  showToast(`✦ Transaksi ${cfCurrentType === 'income' ? 'pemasukan' : 'pengeluaran'} disimpan!`);
+}
+
+function deleteCFTransaction(id) {
+  if (!confirm('Hapus transaksi ini?')) return;
+  const data = loadCashflow().filter(t => t.id !== id);
+  saveCashflow(data);
+  renderCashflow();
+  showToast('🗑 Transaksi dihapus');
+}
+
+function populateCFMonthFilter() {
+  const sel = document.getElementById('cf-filter-month');
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const now = new Date();
+  sel.innerHTML = '<option value="">Semua Bulan</option>';
+  for (let y = now.getFullYear(); y >= now.getFullYear() - 2; y--) {
+    for (let m = 11; m >= 0; m--) {
+      if (y === now.getFullYear() && m > now.getMonth()) continue;
+      sel.innerHTML += `<option value="${y}-${String(m+1).padStart(2,'0')}">${months[m]} ${y}</option>`;
+    }
+  }
+}
+
+function renderCashflow() {
+  const data = loadCashflow();
+  const search = (document.getElementById('cf-search').value || '').toLowerCase();
+  const typeFilter = document.getElementById('cf-filter-type').value;
+  const monthFilter = document.getElementById('cf-filter-month').value;
+  const now = new Date();
+  const thisYM = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+  // Calculate monthly summary (current month)
+  const thisMonthData = data.filter(t => t.date && t.date.startsWith(thisYM));
+  const totalIncome = thisMonthData.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalExpense = thisMonthData.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const netAmount = totalIncome - totalExpense;
+
+  document.getElementById('cf-total-income').textContent = formatRp(totalIncome);
+  document.getElementById('cf-total-expense').textContent = formatRp(totalExpense);
+  const netEl = document.getElementById('cf-net-amount');
+  netEl.textContent = formatRp(Math.abs(netAmount));
+  netEl.className = 'cf-amount net ' + (netAmount > 0 ? 'positive' : netAmount < 0 ? 'negative' : 'zero');
+  document.getElementById('cf-net-label').textContent = netAmount >= 0 ? '✅ Surplus' : '⚠️ Defisit';
+
+  const monthName = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+  document.getElementById('cf-income-month').textContent = monthName;
+  document.getElementById('cf-expense-month').textContent = monthName;
+
+  // Filter
+  let filtered = data.filter(t => {
+    const matchSearch = !search || (t.description||'').toLowerCase().includes(search) || (t.category||'').toLowerCase().includes(search);
+    const matchType = !typeFilter || t.type === typeFilter;
+    const matchMonth = !monthFilter || (t.date && t.date.startsWith(monthFilter));
+    return matchSearch && matchType && matchMonth;
+  });
+
+  const tbody = document.getElementById('cf-table-body');
+  const emptyEl = document.getElementById('cf-empty');
+  const summaryBar = document.getElementById('cf-summary-bar');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = 'block';
+    summaryBar.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  tbody.innerHTML = filtered.map(t => {
+    const dateStr = t.date ? new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+    const isIncome = t.type === 'income';
+    const amtStr = (isIncome ? '+' : '-') + ' ' + formatRp(t.amount);
+    return `
+      <tr>
+        <td style="white-space:nowrap;">${dateStr}</td>
+        <td><span class="${isIncome ? 'cf-badge-income' : 'cf-badge-expense'}">${isIncome ? '📈 Masuk' : '📉 Keluar'}</span></td>
+        <td style="font-size:0.84rem;">${t.category || '—'}</td>
+        <td style="color:rgba(253,250,244,0.65);font-size:0.84rem;">${t.description || '—'}</td>
+        <td style="font-size:0.82rem;color:rgba(253,250,244,0.5);">${t.method || '—'}</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-weight:700;font-size:0.9rem;color:${isIncome ? '#4ade80' : '#f87171'};">${amtStr}</td>
+        <td><button class="btn-icon danger" onclick="deleteCFTransaction('${t.id}')" title="Hapus">🗑</button></td>
+      </tr>
+    `;
+  }).join('');
+
+  // Summary bar
+  const sumIncome = filtered.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const sumExpense = filtered.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const sumNet = sumIncome - sumExpense;
+  document.getElementById('cf-sum-count').textContent = filtered.length;
+  document.getElementById('cf-sum-income').textContent = formatRp(sumIncome);
+  document.getElementById('cf-sum-expense').textContent = formatRp(sumExpense);
+  const netSumEl = document.getElementById('cf-sum-net');
+  netSumEl.textContent = (sumNet >= 0 ? '+' : '-') + ' ' + formatRp(Math.abs(sumNet));
+  netSumEl.style.color = sumNet >= 0 ? '#4ade80' : '#f87171';
+  summaryBar.style.display = 'block';
 }
 
 // ── Print / PDF styles
